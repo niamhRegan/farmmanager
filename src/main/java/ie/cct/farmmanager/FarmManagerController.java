@@ -37,4 +37,18 @@ public class FarmManagerController {
 		return animals;
 	}
 
+	// this annotation is used to tell spring to connect a HTTP GET resource to this method
+	// the URL for this method is http://localhost:8080/average-weight
+	@GetMapping("average-weight")
+	public Float averageWeight() {
+		Float averageWeight = 0.0f;
+		for (Animal animal: animals) {
+			averageWeight += animal.getWeight();
+		}
+		averageWeight = averageWeight/animals.size();
+
+		// TODO create an object to return JSON instead of Float
+		return averageWeight;
+	}
+	
 }
