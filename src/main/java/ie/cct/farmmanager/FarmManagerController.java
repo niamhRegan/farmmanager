@@ -1,7 +1,9 @@
 package ie.cct.farmmanager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,16 +18,9 @@ public class FarmManagerController {
 	
 	public FarmManagerController() {
 		animals = new ArrayList<Animal>();
-		animals.add(new Animal("Cow", 300.0f));
-		animals.add(new Animal("Pig", 100.0f));
-		animals.add(new Animal("Chicken", 0.5f));
-	}
-	
-	// this annotation is used to tell spring to connect a HTTP GET resource to this method
-	// the URL for this method is http://localhost:8080/hello-world
-	@GetMapping("hello-world")
-	public String hello() {
-		return "Hello World!";
+		animals.add(new Animal("cow", 300.0f));
+		animals.add(new Animal("pig", 100.0f));
+		animals.add(new Animal("chicken", 0.5f));
 	}
 	
 	// POST is used to receive data from the client and create an entity
@@ -49,6 +44,26 @@ public class FarmManagerController {
 
 		// TODO create an object to return JSON instead of Float
 		return averageWeight;
+	}
+
+	@GetMapping("count-by-type")
+	public Map<String, Integer> countByType() {
+		Float minCowWeight = 300.0f;
+		Float minPigWeight = 100.0f;
+		Float minChickenWeight = 5.0f;		
+
+		// TODO check meets minimum weight
+		
+		Map<String, Integer> summary = new HashMap<String, Integer>();
+		for (Animal animal: animals) {
+			if (summary.get(animal.getType()) == null) {
+				summary.put(animal.getType(), 1);
+			} else {
+				Integer count = summary.get(animal.getType());
+				summary.put(animal.getType(), count++);
+			}			
+		}
+		return summary;		
 	}
 	
 }
