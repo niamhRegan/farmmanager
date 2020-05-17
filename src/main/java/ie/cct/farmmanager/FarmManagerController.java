@@ -104,7 +104,7 @@ public class FarmManagerController {
 	// e.g http://localhost:8080/current-value-prices?cow=450&pig=220&chicken=2
 	// returns the current value of full farm stock - only animals that meet min weight requirements
 	@GetMapping(value = "current-value-prices", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Float totalValue() {
+	public Float currentValuePrice() {
 		// TODO get price request parameters and use in currentValue method
 		return this.currentValue();
 	}
