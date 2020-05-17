@@ -28,7 +28,7 @@ public class FarmManagerController {
 	// it is used to receive data from the client and create an animal
 	// the URL for this method is http://localhost:8080/add-animal
 	// it creates a new animal and returns the list of animals containing the newly added animal
-	@PostMapping(value = "add-animal", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping("add-animal")
 	public List<Animal> addAnimal(@RequestBody Animal animal) {
 		this.animals.add(animal);
 		return animals;
@@ -37,22 +37,25 @@ public class FarmManagerController {
 	// CA-2
 	// this annotation is used to tell spring to connect a HTTP GET resource to this method and return JSON
 	// the URL for this method is http://localhost:8080/average-weight
-	// returns the average weight of each type of animal
-	@GetMapping(value = "average-weight", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Float averageWeight() {
+	// you must pass an animal type e.g. http://localhost:8080/average-weight?type=cow
+	// returns the average weight for that animal type
+	@GetMapping("average-weight")
+	public AverageWeightResponse averageWeight(@RequestParam(required = true)String type) {
 		Float averageWeight = 0.0f;
 		for (Animal animal: animals) {
-			averageWeight += animal.getWeight();
+			if (animal.getType().contentEquals(type)) {				
+				averageWeight += animal.getWeight();
+			}
 		}
 		averageWeight = averageWeight/animals.size();
-		return averageWeight;
+		return new AverageWeightResponse(type, averageWeight);
 	}
 
 	// CA-3
 	// this annotation is used to tell spring to connect a HTTP GET resource to this method and return JSON
 	// the URL for this method is http://localhost:8080/count-by-type
 	// this counts the number of animals of each type
-	@GetMapping(value = "count-by-type", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping("count-by-type")
 	public Map<String, Integer> countByType() {
 		Map<String, Integer> summary = new HashMap<String, Integer>();
 		for (Animal animal: animals) {
@@ -70,8 +73,8 @@ public class FarmManagerController {
 	// this annotation is used to tell spring to connect a HTTP GET resource to this method and return JSON
 	// the URL for this method is http://localhost:8080/current-value
 	// returns the current value of full farm stock - only animals that meet min weight requirements
-	@GetMapping(value = "current-value", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Float currentValue() {
+	@GetMapping("current-value")
+	public CurrentValueResponse currentValue() {
 		Float farmValue = 0.0f;
 		for (Animal animal : animals) {
 			switch (animal.getType()) {
@@ -94,7 +97,7 @@ public class FarmManagerController {
 					break;
 			}
 		}
-		return farmValue;
+		return new CurrentValueResponse(farmValue);
 	}
 	
 	// CA-5
@@ -103,8 +106,8 @@ public class FarmManagerController {
 	// you must supply a the current price of all 3 animals cow pig and chicken
 	// e.g http://localhost:8080/current-value-prices?cow=450&pig=220&chicken=2
 	// returns the current value of full farm stock - only animals that meet min weight requirements
-	@GetMapping(value = "current-value-prices", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Float currentValuePrice() {
+	@GetMapping("current-value-prices")
+	public CurrentValueResponse currentValuePrice() {
 		// TODO get price request parameters and use in currentValue method
 		return this.currentValue();
 	}
